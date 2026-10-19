@@ -72,3 +72,13 @@ Para atualizar o HTML versionado em uma sessão com acesso aos arquivos históri
 ```
 
 O coletor deste comando usa o arquivo mensal de `data.binance.vision`, não a API `data-api.binance.vision`. Acesso apenas à API requer adaptar a coleta, mantendo as regras e a integridade do período. Um commit do HTML no repositório não habilita automaticamente GitHub Pages.
+
+## Publicação com dados reais
+
+Endereço fixo: https://btc-cruzamento-medias-lubra.toastypig.chatgpt.site
+
+Hospedagem privada pelo Sites, projeto `appgprj_6ad5b0935e788191b2a782e02033b925`. Para atualizar o mesmo endereço, gerar `python backtest/cruzamento_medias.py --output docs/cruzamento-medias/index.html`, verificar e publicar uma nova versão desse mesmo projeto. Não criar outro Site para futuras atualizações.
+
+GitHub Pages não foi habilitado: a integração devolveu HTTP 403 `Resource not accessible by integration`. A pasta `docs/` também preserva o HTML e o JSON para eventual publicação pelo Pages após habilitação com uma conta autorizada.
+
+O gráfico usa Lightweight Charts 4.2.0 incorporado ao HTML, sem CDN: fundo branco, candles de alta azuis e de baixa pretos, cores configuráveis, cursor OHLC, zoom e arraste. Os resultados de mercado mantêm as regras originais. O estado pendente descrito acima documenta a sessão anterior; a versão atual usa os dados reais e checksum validado.

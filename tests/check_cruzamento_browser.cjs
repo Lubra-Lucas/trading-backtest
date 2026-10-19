@@ -13,7 +13,7 @@ const assert=require('node:assert/strict');
  const root=path.resolve(__dirname,'..'),tmp=fs.mkdtempSync(path.join(os.tmpdir(),'cross-browser-'));
  let browser,server;
  try {
- execFileSync(path.join(root,'.venv/bin/python'),['-c',`
+ execFileSync('python',['-c',`
 import sys
 import pandas as pd
 import numpy as np
@@ -43,7 +43,10 @@ c.render_report(dict(status='blocked',candles=[],trades=[],summary=None),sys.arg
  assert.match(await page.locator('#status').textContent(),/SINTÉTICO/);
  assert.ok(await page.locator('#trades tr').count()>20);
  assert.equal(await page.locator('#chart').isVisible(),true);
- assert.equal(await page.locator('#chart circle').count(),2);
+ assert.ok(await page.locator('#chart canvas').count()>0);
+ assert.equal(await page.evaluate(()=>candleSeries.options().upColor),'#2563eb');
+ assert.equal(await page.evaluate(()=>candleSeries.options().downColor),'#111111');
+ assert.equal(await page.evaluate(()=>lcChart.options().layout.background.color),'#ffffff');
  assert.equal(await page.locator('#levels .level').count(),6);
  const first=await page.locator('#levels').textContent();
  await page.locator('#next').click();
@@ -52,13 +55,23 @@ c.render_report(dict(status='blocked',candles=[],trades=[],summary=None),sys.arg
  await page.locator('#prev').click();assert.equal(await page.locator('#trade-select').inputValue(),'0');
  await page.locator('#trade-select').selectOption('5');
  assert.equal(await page.locator('#trades tr.selected td').first().textContent(),'#6');
+ const before=await page.evaluate(()=>lcChart.timeScale().getVisibleLogicalRange());
+ await page.locator('#chart').hover({position:{x:300,y:180}});await page.mouse.wheel(0,-500);await page.waitForTimeout(300);
+ const after=await page.evaluate(()=>lcChart.timeScale().getVisibleLogicalRange());
+ assert.notEqual(after.to-after.from,before.to-before.from);
+ const box=await page.locator('#chart').boundingBox();
+ await page.mouse.move(box.x+300,box.y+180);await page.mouse.down();await page.mouse.move(box.x+450,box.y+180,{steps:10});await page.mouse.up();await page.waitForTimeout(200);
+ assert.notDeepEqual(await page.evaluate(()=>lcChart.timeScale().getVisibleLogicalRange()),after);
  await page.locator('#zoom-out').click();await page.locator('#zoom-in').click();
  await page.locator('#trades tr').nth(3).click();assert.equal(await page.locator('#trade-select').inputValue(),'3');
  await page.locator('#chart').hover({position:{x:300,y:200}});assert.match(await page.locator('#tooltip').textContent(),/UTC/);
  await page.setViewportSize({width:390,height:844});
  assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>window.innerWidth),false);
  await page.emulateMedia({colorScheme:'dark'});
- assert.equal(await page.locator('#chart circle').count(),2);
+ assert.ok(await page.locator('#chart canvas').count()>0);
+ assert.equal(await page.evaluate(()=>candleSeries.options().upColor),'#2563eb');
+ assert.equal(await page.evaluate(()=>candleSeries.options().downColor),'#111111');
+ assert.equal(await page.evaluate(()=>lcChart.options().layout.background.color),'#ffffff');
  assert.deepEqual(errors,[]);
  console.log('Browser OK: pendência, identificação sintética, gráfico, entrada/saída, níveis R, tabela, navegação, zoom, tooltip e mobile. Não valida dados reais.');
  } finally {if(browser)await browser.close();if(server)await new Promise(resolve=>server.close(resolve));fs.rmSync(tmp,{recursive:true,force:true});}
