@@ -66,6 +66,24 @@ class Execution(unittest.TestCase):
         self.assertAlmostEqual(t['entry'],100.1)
         self.assertAlmostEqual(t['exit'],85.1*.999)
 
+    def test_gross_r_uses_price_levels_before_exit_costs(self):
+        stop = self.run_case(bars([(100,101,99,100),(100,135,80,100)],[1,0]), fee=.0005, slippage=.001)[0]
+        self.assertEqual(stop['gross_r'], -1)
+        self.assertLess(stop['net_r'], -1)
+        self.assertAlmostEqual(stop['exit_reference'], stop['stop'])
+        target = self.run_case(bars([(100,101,99,100),(100,140,99,130)],[1,0]), fee=.0005, slippage=.001)[0]
+        self.assertAlmostEqual(target['gross_r'], 2)
+        self.assertLess(target['net_r'], 2)
+        self.assertAlmostEqual(target['exit_reference'], target['target'])
+
+    def test_gross_r_keeps_gap_and_cross_results_instead_of_rounding(self):
+        gap = self.run_case(bars([(100,101,99,100),(100,105,90,100),(75,90,70,80)],[1,0,0]), fee=.0005, slippage=0)[0]
+        self.assertLess(gap['gross_r'], -1)
+        cross = self.run_case(bars([(100,101,99,100),(100,102,98,100),(103,104,99,102)],[1,-1,0]), fee=.0005, slippage=0)[0]
+        self.assertAlmostEqual(cross['gross_r'], .2)
+        summary = engine.summarize([gap,cross], r_key='gross_r')
+        self.assertAlmostEqual(summary['total_r'], gap['gross_r'] + cross['gross_r'])
+
     def test_no_reentry_until_new_cross_and_reversal_at_next_open(self):
         df = bars([(100,101,99,100),(100,102,80,95),(95,100,90,95),(95,100,90,95),(95,100,90,95)], [1,0,-1,0,0])
         trades = self.run_case(df, fee=0, slippage=0)

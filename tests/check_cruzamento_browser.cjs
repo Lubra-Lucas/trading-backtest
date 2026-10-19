@@ -48,10 +48,16 @@ c.render_report(dict(status='blocked',candles=[],trades=[],summary=None),sys.arg
  assert.equal(await page.evaluate(()=>candleSeries.options().downColor),'#111111');
  assert.equal(await page.evaluate(()=>lcChart.options().layout.background.color),'#ffffff');
  assert.equal(await page.locator('#levels .level').count(),6);
+ assert.match(await page.locator('#levels').textContent(),/R bruto/);
+ assert.match(await page.locator('#trade-diagnosis').textContent(),/Por que entrou/);
+ assert.equal(await page.evaluate(()=>priceLines[1].options().color),'#dc2626');
+ assert.equal(await page.evaluate(()=>priceLines[0].options().lineWidth),2);
+ const diagnosis=await page.locator('#trade-diagnosis').textContent();
  const first=await page.locator('#levels').textContent();
  await page.locator('#next').click();
  assert.equal(await page.locator('#trade-select').inputValue(),'1');
  assert.notEqual(await page.locator('#levels').textContent(),first);
+ assert.notEqual(await page.locator('#trade-diagnosis').textContent(),diagnosis);
  await page.locator('#prev').click();assert.equal(await page.locator('#trade-select').inputValue(),'0');
  await page.locator('#trade-select').selectOption('5');
  assert.equal(await page.locator('#trades tr.selected td').first().textContent(),'#6');

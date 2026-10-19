@@ -82,3 +82,9 @@ Hospedagem privada pelo Sites, projeto `appgprj_6ad5b0935e788191b2a782e02033b925
 GitHub Pages não foi habilitado: a integração devolveu HTTP 403 `Resource not accessible by integration`. A pasta `docs/` também preserva o HTML e o JSON para eventual publicação pelo Pages após habilitação com uma conta autorizada.
 
 O gráfico usa Lightweight Charts 4.2.0 incorporado ao HTML, sem CDN: fundo branco, candles de alta azuis e de baixa pretos, cores configuráveis, cursor OHLC, zoom e arraste. Os resultados de mercado mantêm as regras originais. O estado pendente descrito acima documenta a sessão anterior; a versão atual usa os dados reais e checksum validado.
+
+## Leitura em R bruto
+
+O relatório destaca `gross_r`: movimento direcional entre a entrada executada original e a saída de referência (antes do slippage da saída), dividido pela distância inicial de stop. Stop normal = −1R, alvo = +2R; gaps e cruzamentos contrários preservam seu resultado proporcional. A entrada e os níveis continuam os mesmos da simulação original; não se recalculam sinais ou operações para melhorar os resultados. `execution_gross_r` preserva o movimento com slippage de saída; `net_r` continua descontando também as taxas e aparece apenas na auditoria de custos. `summary` preserva as métricas líquidas; `gross_summary` alimenta os indicadores e a curva visíveis.
+
+A ficha de cada operação explica o sinal EMA9/21, o gatilho de saída, risco em USDT por BTC, duração e eventuais ambiguidades de stop/alvo no mesmo candle. São explicações da execução, sem atribuições especulativas de causa do mercado. Entrada em azul com linha pontilhada forte, stop vermelho, alvos verdes pontilhados.

@@ -87,9 +87,10 @@ def simulate(df, *, start=START, end=END, fee=FEE, slippage=SLIPPAGE):
         executed=float(price*(1-d*slippage))
         gross=d*(executed-pos['entry'])
         fees=fee*(pos['entry']+executed)
-        pos.update(exit_index=index,exit_time=df.time.iloc[index].isoformat(),exit=executed,
+        pos.update(exit_index=index,exit_time=df.time.iloc[index].isoformat(),exit=executed,exit_reference=float(price),
                    reason=reason,open=False,net_r=(gross-fees)/pos['risk'],
-                   gross_r=gross/pos['risk'],fees_r=fees/pos['risk'],unrealized_r=None)
+                   gross_r=round(d*(float(price)-pos['entry'])/pos['risk'],12),
+                   execution_gross_r=gross/pos['risk'],fees_r=fees/pos['risk'],unrealized_r=None)
         trades.append(pos)
         pos=None
 
@@ -134,8 +135,8 @@ def simulate(df, *, start=START, end=END, fee=FEE, slippage=SLIPPAGE):
     return trades
 
 
-def summarize(trades):
-    rs=[t['net_r'] for t in trades if not t['open']]
+def summarize(trades, *, r_key='net_r'):
+    rs=[t[r_key] for t in trades if not t['open']]
     wins=sum(r>0 for r in rs)
     profits=sum(r for r in rs if r>0)
     losses=-sum(r for r in rs if r<0)
@@ -210,7 +211,7 @@ def build_report(df, source):
                             ema9=float(row.ema9),ema21=float(row.ema21)))
     return dict(status='ready',generated_at=datetime.now(timezone.utc).isoformat(),
                 start=START,end=END,source=source,candles=candles,trades=trades,
-                summary=summarize(trades),fee=FEE,slippage=SLIPPAGE)
+                summary=summarize(trades),gross_summary=summarize(trades,r_key='gross_r'),fee=FEE,slippage=SLIPPAGE)
 
 
 def main():
