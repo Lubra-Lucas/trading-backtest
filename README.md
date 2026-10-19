@@ -2,6 +2,10 @@
 
 Laboratório de backtest e visualização de trades em HTML com Lightweight Charts.
 
+## Estudo atual
+
+[Tendência SMA20/60 + faixa 1,5 ATR no BTC M5](backtest/TENDENCIA_HISTERESE.md) · [Abrir relatório interativo](https://btc-cruzamento-medias-lubra.toastypig.chatgpt.site)
+
 ## Comece por aqui
 
 - [Arquitetura, cálculo de R e publicação](BACKTEST_ARQUITETURA_E_PUBLICACAO.md)
