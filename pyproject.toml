@@ -1,0 +1,21 @@
+[project]
+name = "repl-nix-workspace"
+version = "0.1.0"
+description = "Add your description here"
+requires-python = ">=3.11"
+dependencies = [
+    "ccxt>=3.1.60",
+    "kaleido>=1.0.0",
+    "matplotlib>=3.10.3",
+    "numpy>=2.3.1",
+    "pandas>=2.3.1",
+    "plotly>=6.2.0",
+    "pytelegrambotapi>=4.27.0",
+    "python-telegram-bot>=22.3",
+    "requests>=2.32.4",
+    "schedule>=1.2.2",
+    "scikit-learn>=1.7.1",
+    "streamlit>=1.47.0",
+    "telebot==0.0.5",
+    "yfinance>=0.2.65",
+]
